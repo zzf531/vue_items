@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Vue Todo</title></head>
+  <style>
+    .completed {
+      text-decoration: line-through;
+      color: #661133
+    }
+    .selected {
+      color: red;
+    }
+    .empty {
+        border-color: seagreen;
+    }
+  </style>
+
+<body>
+<div id="app">
+  <div>
+    <input type="button" value="全部标为完成"/>
+    <input type="text" v-bind:class='{empty: emptyChecked}' placeholder="添加 todo"v-model="newTodoTitle" @keyup.enter="addTodo"/>
+    <span v-if="emptyChecked" style="color: red">请输入内容！</span>
+</div>
+  <!-- todo list -->
+<ul>
+    <li v-for='todo in todos' :key='todo.id'>
+        <span v-bind:class='{completed: todo.completed}'>{{ todo.title }}</span>
+        <input type="button" value="标为完成"
+               @click="markAsCompleted (todo)"/>
+        <input type="button" value="删除" />
+        <input type="text" value="编辑 todo..."/>
+    </li>
+</ul>
+  <!-- end todo list -->
+ <div>
+    <span>剩余 3 项未完成 ---</span>
+    <span>筛选：
+      <input type="button" class="selected" value="全部">
+      <input type="button" value="进行中">
+      <input type="button" value="已完成">
+      <input type="button" value="清除已完成">
+      <input type="button" value="清除全部">
+    </span>
+  </div>
+</div>
+
+<script src="https://cdn.bootcss.com/vue/2.5.16/vue.js"></script>
+<script>
+    let id = 0;
+    var app = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                todos: [],
+                newTodoTitle: '',
+                checkEmpty: false // 增加一个检查空值标志
+            }
+        },
+        computed: {
+            emptyChecked: function() {
+                return this.newTodoTitle.length === 0 && this.checkEmpty
+            }
+        },
+        methods: {
+            addTodo: function () {
+                if(this.newTodoTitle=='') {
+                    // alert('输入了,按回车,才能添加啊')
+                    this.checkEmpty = true;
+                    return
+                }
+                this.todos.push(
+                    // 修改后的 todo 模型
+                    {id: id++, title: this.newTodoTitle, completed: false}
+                );
+                this.newTodoTitle = ''
+                this.checkEmpty = false;
+            },
+            markAsCompleted: function (todo) {
+            todo.completed = true
+        }
+        }
+    })
+</script>
+</body>
+</html>
